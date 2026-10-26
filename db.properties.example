@@ -1,0 +1,16 @@
+# Copy this file to db.properties (git-ignored) and fill in your values.
+# These match the local-dev accounts in sql/04_app_users.sql -- never use root.
+
+db.url=jdbc:mysql://localhost:3306/employeeData
+
+# Used only to check logins and write the audit log
+db.auth.user=ems_auth
+db.auth.password=auth-local-dev
+
+# Used after a general employee signs in (read-only)
+db.employee.user=ems_employee
+db.employee.password=employee-local-dev
+
+# Used after an HR admin signs in (CRUD)
+db.hr.user=ems_hr
+db.hr.password=hr-local-dev

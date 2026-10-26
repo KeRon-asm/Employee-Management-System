@@ -1,0 +1,18 @@
+# One-command local database for every teammate:  docker compose up -d
+# Scripts in sql/ run in filename order the first time the container starts.
+# To rebuild from scratch:  docker compose down -v && docker compose up -d
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: ems-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root-local-only
+      MYSQL_DATABASE: employeeData
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d:ro
+      - ems-data:/var/lib/mysql
+
+volumes:
+  ems-data:

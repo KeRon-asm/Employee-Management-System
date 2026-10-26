@@ -1,0 +1,27 @@
+# Build output
+target/
+out/
+bin/
+*.class
+
+# Local database credentials -- NEVER commit these
+db.properties
+.env
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+nbproject/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Submission artifacts
+*.zip
+*.mp4
+*.mov
