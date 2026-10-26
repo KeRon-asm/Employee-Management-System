@@ -1,0 +1,251 @@
+11/1 ASSIGNMENTS - PROGRAMMING TASKS AND TEST CASES
+CSc 3350, Fall 2026 - Company Z Employee Management System
+Due: Sunday 11/1/2026, 11:59 PM. No late submissions.
+
+Member 1 = ________   Member 2 = ________   Member 3 = ________
+Member 4 = ________   Member 5 = ________   Member 6 = ________
+
+
+READ THIS FIRST
+----------------------------------------------------------------------
+[REQUIRED] = must be done for the 11/1 grade.
+[EXTRA]    = not graded on 11/1. Do it if you have time; target Sun 11/8.
+
+For the 11/1 REQUIRED work, nobody writes Java. A "programming task" (PT)
+is a written description of a Java file we WILL build. You describe it
+using docs/templates/programming-task.md, then write 3 test cases using
+docs/templates/test-case.md. Both go in ONE file: docs/deliverable-2/PT-<n>.md
+
+Every test case uses the shared test data in sql/05_seed_data.sql.
+Logins:  hradmin / HrAdmin!2026  (HR admin)
+         abrooks / Employee!2026 (employee, empid 1001)
+empid 9999 does not exist (use it for "not found" tests).
+
+For [EXTRA] code: all files go under src/main/java/com/companyz/ems/.
+Every Jdbc class takes a ConnectionFactory in its constructor and uses
+PreparedStatement for every query.
+
+Deadlines:
+  Thu 10/29  Your PT and 3 test cases drafted, pull request opened
+  Fri 10/30  Review the next member's work (1 reviews 2, 2 reviews 3 ... 6 reviews 1)
+  Sat 10/31  Final version to Member 1 by noon
+  Sun 11/1   Member 1 submits by 6 PM
+
+
+======================================================================
+MEMBER 1 - LOGIN
+======================================================================
+
+[REQUIRED] PT-1: Login and role-based authorization (feature 1)
+  Write PT-1 describing service/AuthServiceImpl.java, a class that
+  implements AuthService and has one method, login(String username,
+  char[] password), which returns a Session. It checks the password with
+  PasswordHasher.verify, looks the user up with JdbcUserDao, writes LOGIN
+  or LOGIN_FAILED to audit_log with JdbcAuditDao, and locks the account
+  for 15 minutes after 5 wrong passwords. Wrong username and wrong password
+  must show the same message: "Invalid username or password."
+
+  Test cases (minimum 3):
+  TC-1.1  Input: hradmin / HrAdmin!2026
+          Expected: login succeeds, Session role = HR_ADMIN, LOGIN row in audit_log
+  TC-1.2  Input: abrooks / wrongpass
+          Expected: "Invalid username or password.", app_users.failed_attempts = 1
+  TC-1.3  Input: abrooks with a wrong password 5 times, then Employee!2026
+          Expected: 5th try shows "Account locked. Try again in 15 minutes.",
+          and the correct password is also refused while locked
+
+[REQUIRED] Team duty: Editor
+  Combine all six PT files into one PDF with a cover page and table of
+  contents. Submit it on iCollege by 6 PM Sunday. You are the ONLY person
+  who uploads.
+
+[EXTRA] PT-7: Audit logging
+  Write PT-7 describing dao/jdbc/JdbcAuditDao.java, a class that implements
+  AuditDao and has one method, record(userId, action, tableName, recordId,
+  oldValue, newValue), which inserts one row into audit_log. Explain that
+  every login, insert, update and delete in the app calls it. No test
+  cases required.
+
+[EXTRA] Code
+  Create dao/jdbc/JdbcUserDao.java (implements UserDao: findByUsername,
+  recordFailedAttempt, resetFailedAttempts), dao/jdbc/JdbcAuditDao.java
+  (implements AuditDao: record), and service/AuthServiceImpl.java
+  (implements AuthService: login). Use the "ems_auth" database account.
+
+
+======================================================================
+MEMBER 2 - SEARCH
+======================================================================
+
+[REQUIRED] PT-2: HR admin searches employees to edit (feature 2)
+  Write PT-2 describing searchForEditing(Session, SearchCriteria) in
+  service/EmployeeServiceImpl.java, which only an HR_ADMIN may call, and
+  search(SearchCriteria) and findById(int) in dao/jdbc/JdbcEmployeeDao.java.
+  The search accepts any mix of name, date of birth, SSN and empID,
+  combines them with AND, matches names case-insensitively, and returns a
+  list of employees. Picking a row from the list opens that employee for
+  editing (Member 4's task).
+
+  Test cases (minimum 3):
+  TC-2.1  Input: hradmin searches name "reed"
+          Expected: 1 result: 1002 Marcus Reed
+  TC-2.2  Input: hradmin searches SSN 111-22-1006
+          Expected: 1 result: 1006 James Whitfield
+  TC-2.3  Input: hradmin searches empID 9999
+          Expected: "No matching employee", empty list
+
+[REQUIRED] Team duty: Test data
+  Make sure sql/05_seed_data.sql matches what every test case uses, and
+  compare sql/01_base_schema.sql with the professor's employeeData script.
+  Tell the group by Wed 10/28 if anything changes.
+
+[EXTRA] PT-8: Employee views their own record (feature 3)
+  Write PT-8 describing searchForViewing(Session, SearchCriteria) in
+  service/EmployeeServiceImpl.java, which only an EMPLOYEE may call and
+  returns only the signed-in employee's own record. If the search matches
+  anyone else, it shows "No matching employee", and the SSN is always
+  shown masked (***-**-1234). No test cases required.
+
+[EXTRA] Code
+  Create dao/jdbc/JdbcEmployeeDao.java (implements EmployeeDao) and
+  service/EmployeeServiceImpl.java (implements EmployeeService). Write
+  findById, search, searchForEditing and searchForViewing; make every
+  other method "throw new UnsupportedOperationException("TODO");" so
+  Members 4, 5 and 6 can fill theirs in. Push these two files FIRST so
+  the others can start.
+
+
+======================================================================
+MEMBER 3 - REPORTS
+======================================================================
+
+[REQUIRED] PT-3: Payroll and employee reports (feature 6a-6e)
+  Write PT-3 describing dao/jdbc/JdbcPayrollDao.java (one method:
+  findByEmployeeNewestFirst(int empId)) and dao/jdbc/JdbcReportDao.java
+  (four methods: totalPayByJobTitle(YearMonth), totalPayByDivision(YearMonth),
+  findHiredBetween(DateRange), findAllWithJobAndDivision()). Explain that
+  these feed the five report classes already in the report package
+  (PayHistoryReport 6a, MonthlyPayByJobTitleReport 6b,
+  MonthlyPayByDivisionReport 6c, NewHiresReport 6d,
+  EmployeesByJobTitleReport 6e). Include a table of which role can run
+  each report: 6a employee only; 6b, 6c, 6e HR only; 6d everyone.
+
+  Test cases (minimum 3):
+  TC-3.1  Input: abrooks runs 6a (pay history)
+          Expected: 2 rows, 2026-09-30 first, then 2026-09-15, gross pay $1,875.00 each
+  TC-3.2  Input: abrooks tries to run 6b (total pay by job title)
+          Expected: access denied, no data shown
+  TC-3.3  Input: abrooks runs 6d for 2024-01-01 to 2026-12-31
+          Expected: 2 rows: 1004 Daniel Okafor (2024-06-17), then 1007 Noah Kim
+          (2026-08-03). No salary or SSN column
+
+[REQUIRED] Team duty: Table check
+  Read every member's PT and confirm the table names are correct,
+  including the new tables: addresses, demographics, cities, states.
+
+[EXTRA] Code
+  Create dao/jdbc/JdbcPayrollDao.java (implements PayrollDao) and
+  dao/jdbc/JdbcReportDao.java (implements ReportDao). "Total pay" is
+  SUM(payroll.earnings) for pay dates in that month; pay history must use
+  ORDER BY pay_date DESC.
+
+
+======================================================================
+MEMBER 4 - UPDATE EMPLOYEE
+======================================================================
+
+[REQUIRED] PT-4: Update employee data (feature 4, task a)
+  Write PT-4 describing updateEmployee(Session, Employee) in
+  service/EmployeeServiceImpl.java, which only an HR_ADMIN may call, and
+  update(Employee) in dao/jdbc/JdbcEmployeeDao.java. It saves every field
+  of the Employee, Address and Demographics classes into the employees,
+  addresses, demographics, employee_job_titles and employee_division
+  tables in ONE transaction, rolling everything back if any part fails.
+  It also writes an UPDATE row to audit_log with the old and new values.
+
+  Test cases (minimum 3):
+  TC-4.1  Input: hradmin changes 1004 Daniel Okafor's mobile phone to 470-555-9999
+          Expected: demographics.mobile_phone = 470-555-9999, all other fields
+          unchanged, one UPDATE row in audit_log for 1004
+  TC-4.2  Input: hradmin changes 1002's email to ava.brooks@companyz.com (already used by 1001)
+          Expected: "Email already in use", nothing saved for 1002
+  TC-4.3  Input: abrooks (employee) tries to update her own record
+          Expected: access denied, nothing saved
+
+[EXTRA] PT-9: Add a new employee (task 3b)
+  Write PT-9 describing addEmployee(Session, Employee) in
+  service/EmployeeServiceImpl.java and insert(Employee) in
+  dao/jdbc/JdbcEmployeeDao.java, which insert into employees, addresses,
+  demographics, employee_job_titles and employee_division in one
+  transaction. The empID is auto-generated by MySQL (the next one will be
+  1008) and returned to the user. No test cases required.
+
+[EXTRA] Code
+  In dao/jdbc/JdbcEmployeeDao.java, write update and insert. In
+  service/EmployeeServiceImpl.java, write updateEmployee and addEmployee.
+  Wait for Member 2 to push those two files first.
+
+
+======================================================================
+MEMBER 5 - DELETE EMPLOYEE
+======================================================================
+
+[REQUIRED] PT-5: Search by empID to delete (task b)
+  Write PT-5 describing findForDeletion(Session, int empId) and
+  deleteEmployee(Session, int empId) in service/EmployeeServiceImpl.java,
+  plus delete(int empId) in dao/jdbc/JdbcEmployeeDao.java, all HR_ADMIN
+  only. If the empID is found, show the name and ask "Delete employee
+  <empID> <name>? Yes / No". On Yes, delete the employee (their address,
+  demographics, payroll, job title, division and login rows are removed
+  automatically) and write a DELETE row to audit_log; if not found, show
+  "No match for employee <empID>".
+
+  Test cases (minimum 3):
+  TC-5.1  Input: hradmin enters 1006, clicks Yes
+          Expected: "Employee 1006 deleted", no rows for 1006 in employees,
+          addresses, demographics or payroll
+  TC-5.2  Input: hradmin enters 1006, clicks No
+          Expected: "Delete cancelled", 1006 still exists, unchanged
+  TC-5.3  Input: hradmin enters 9999
+          Expected: "No match for employee 9999", no Yes/No prompt, nothing deleted
+
+[EXTRA] Code
+  In dao/jdbc/JdbcEmployeeDao.java, write delete. In
+  service/EmployeeServiceImpl.java, write findForDeletion and
+  deleteEmployee. Wait for Member 2 to push those two files first.
+
+
+======================================================================
+MEMBER 6 - SALARY RAISE
+======================================================================
+
+[REQUIRED] PT-6: Raise salary when salary is less than an amount (task c)
+  Write PT-6 describing applyRaise(Session, SalaryRaise) in
+  service/EmployeeServiceImpl.java, which only an HR_ADMIN may call, and
+  applyRaise(SalaryRaise) in dao/jdbc/JdbcEmployeeDao.java. HR enters a
+  percentage and a threshold; the app builds SalaryRaise.below(percent,
+  threshold) and runs "UPDATE employees SET Salary = ROUND(Salary * (1 +
+  percent/100), 2) WHERE Salary < threshold" in one transaction. It shows
+  "<count> employees updated", and an employee earning EXACTLY the
+  threshold is NOT raised.
+
+  Test cases (minimum 3):
+  TC-6.1  Input: hradmin, 3% raise, threshold 60000
+          Expected: "2 employees updated", 1001 = $46,350.00, 1002 = $61,799.99
+  TC-6.2  Input: same as TC-6.1
+          Expected: 1003 (exactly $60,000.00) and 1004 ($60,000.01) are unchanged
+  TC-6.3  Input: hradmin, -5% raise, threshold 60000
+          Expected: "Raise percentage must be greater than 0", no salaries changed
+
+[EXTRA] PT-10: Raise salary for a salary range (feature 5)
+  Write PT-10 describing previewRaise(Session, SalaryRaise) and
+  applyRaise(Session, SalaryRaise) using SalaryRaise.inRange(percent, min,
+  max). HR enters a percentage, minimum and maximum, sees a preview list
+  of who will be raised (old and new salary), then clicks Apply. Both
+  ends are included ($50,000 to $80,000 includes someone earning exactly
+  $80,000), and no test cases are required.
+
+[EXTRA] Code
+  In dao/jdbc/JdbcEmployeeDao.java, write findAffectedBy and applyRaise.
+  In service/EmployeeServiceImpl.java, write previewRaise and applyRaise.
+  Wait for Member 2 to push those two files first.
