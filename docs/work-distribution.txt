@@ -1,0 +1,127 @@
+COMPANY Z EMPLOYEE MANAGEMENT SYSTEM - WORK DISTRIBUTION
+CSc 3350, Fall 2026 - 6 members
+
+Each member owns one feature from start to finish: the programming task,
+the code, the SDD section, and the part of the video that demos it.
+
+Names:
+  Member 1 = ________   Member 2 = ________   Member 3 = ________
+  Member 4 = ________   Member 5 = ________   Member 6 = ________
+
+
+----------------------------------------------------------------------
+MEMBER 1 - LOGIN AND SECURITY (feature 1) + TEAM EDITOR
+----------------------------------------------------------------------
+11/1 tasks:   PT-1 Login and role-based authorization, plus 2+ test cases
+              Set up the PT and test case templates
+              Assemble and submit the 11/1 document
+Code:         AuthService implementation (login, lockout after 5 tries)
+              JdbcUserDao, JdbcAuditDao
+              Login screen and main window / menu navigation
+SDD:          Security levels section
+              Assemble the final SDD PDF and table of contents
+              Extra PT: account lockout
+Video:        Intro and login demo (HR admin and employee)
+Also:         Submits ALL group deliverables (only one person uploads)
+
+
+----------------------------------------------------------------------
+MEMBER 2 - SEARCH (features 2 and 3) + DATABASE
+----------------------------------------------------------------------
+11/1 tasks:   PT-2 Search by name, DOB, SSN, empID, plus 2+ test cases
+              Finalize shared test data (sql/05_seed_data.sql)
+Code:         JdbcEmployeeDao: findById, search
+              Search screen (HR edit mode and employee view mode)
+              Check sql/01_base_schema.sql against the professor's script
+SDD:          Data schemas section (schema diagram, 3NF tables)
+              Extra PT: employee views own record
+Video:        Search demo
+
+
+----------------------------------------------------------------------
+MEMBER 3 - REPORTS (feature 6a-6e)
+----------------------------------------------------------------------
+11/1 tasks:   PT-3 Reports 6a-6e, plus 2+ test cases
+              Check every PT names the correct tables
+Code:         JdbcPayrollDao, JdbcReportDao
+              Reports screen (pick a report, enter month or date range)
+SDD:          UX / screens section (screenshots of every screen)
+Video:        Payroll reports demo
+
+
+----------------------------------------------------------------------
+MEMBER 4 - UPDATE AND ADD EMPLOYEE (feature 4, task a, task 3b)
+----------------------------------------------------------------------
+11/1 tasks:   PT-4 Update employee data, plus 3+ test cases
+Code:         JdbcEmployeeDao: insert, update
+              EmployeeService: addEmployee, updateEmployee
+              Employee form screen (shared by Add and Edit)
+SDD:          Class diagrams section
+              Extra PT: add new employee (empID auto-generated)
+Video:        Insert new employee and update employee demo
+
+
+----------------------------------------------------------------------
+MEMBER 5 - DELETE (task b) + TESTING
+----------------------------------------------------------------------
+11/1 tasks:   PT-5 Search by empID for deletion, plus 3+ test cases
+Code:         JdbcEmployeeDao: delete
+              EmployeeService: findForDeletion, deleteEmployee,
+              searchForEditing, searchForViewing (role checks, audit log)
+              Delete confirmation dialog
+              Keep the JUnit tests and GitHub CI passing
+SDD:          Test plan and test cases section
+              Extra PT: audit logging
+Video:        Delete demo
+
+
+----------------------------------------------------------------------
+MEMBER 6 - SALARY RAISE (feature 5, task c) + VIDEO PRODUCER
+----------------------------------------------------------------------
+11/1 tasks:   PT-6 Salary raise by percentage, plus 3+ test cases
+Code:         JdbcEmployeeDao: findAffectedBy, applyRaise
+              EmployeeService: previewRaise, applyRaise
+              Salary raise screen (enter %, min, max, preview, apply)
+SDD:          Programming tasks section (collect all 10 PTs)
+Video:        Salary raise demo
+              Producer: script, schedule, record, check length (7-20 min),
+              max 5 slides, export as MP4
+
+
+----------------------------------------------------------------------
+INDIVIDUAL WORK (not split)
+----------------------------------------------------------------------
+11/22 sequence diagrams are INDIVIDUAL. Everyone does their own:
+  a. Salary raise by % for a salary range
+  b. Add new employee (empID auto-generated)
+
+
+----------------------------------------------------------------------
+TIMELINE
+----------------------------------------------------------------------
+Wed 10/28   Templates and seed data ready (Members 1, 2)
+            Team picks Swing or JavaFX
+Thu 10/29   All 11/1 PTs and test cases drafted
+Fri 10/30   Peer review (1 reviews 2, 2 reviews 3, ... 6 reviews 1)
+Sat 10/31   Member 1 assembles the 11/1 document
+Sun 11/1    Member 1 submits by 6 PM                    ** DUE 11/1 **
+
+Nov 2-8     DAO code done (each member's Jdbc methods)
+Nov 9-15    Service code done
+Nov 16-22   Screens done                                 (11/22 individual due)
+Nov 23-29   Everything connected and working end to end  (Thanksgiving 11/26)
+Nov 30      CODE FREEZE - bug fixes only after this
+Dec 1-3     SDD sections due to Member 1
+Dec 4       Record the video (Member 6 runs it)
+Dec 5       Final review of SDD, video, and source ZIP
+Dec 6       Member 1 submits by 6 PM                     ** DUE 12/6 **
+
+
+----------------------------------------------------------------------
+RULES
+----------------------------------------------------------------------
+- Work on your own branch and open a pull request. One teammate approves.
+- Never commit passwords (db.properties stays on your computer).
+- Use the shared test data, empids 1001-1007 (9999 = "not found").
+- Stuck for more than a day? Say so in the group chat.
+- Only Member 1 uploads to iCollege.
