@@ -2,6 +2,7 @@
 # These match the local-dev accounts in sql/04_app_users.sql -- never use root.
 
 db.url=jdbc:mysql://localhost:3306/employeeData
+# Aiven (feature 7): db.url=jdbc:mysql://<host>:<port>/employeeData?sslMode=REQUIRED
 
 # Used only to check logins and write the audit log
 db.auth.user=ems_auth

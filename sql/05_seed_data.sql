@@ -2,18 +2,26 @@
 -- 05_seed_data.sql -- SHARED TEST DATA for everyone's test cases
 --
 -- Write test cases against these exact rows so all six sections of the
--- document agree. Salaries are chosen to sit on the edges of a
--- $60,000 threshold (test case c) and a $50,000-$80,000 range (feature 5):
+-- document agree. Salaries sit on the edges of the two raise rules:
+--   task (c):   salary  < $60,000              (strictly less than)
+--   feature 5:  $50,000 <= salary <= $80,000   (both ends inclusive)
 --
---   empid  name             salary      < 60,000?   in [50,000, 80,000)?
---   1001   Ava Brooks        45,000.00   yes         no
---   1002   Marcus Reed       59,999.99   yes         yes
---   1003   Priya Nair        60,000.00   NO (equal)  yes
---   1004   Daniel Okafor     60,000.01   no          yes
---   1005   Sofia Alvarez     85,000.00   no          no
---   1006   James Whitfield  120,000.00   no          no
+--   empid  name             hired       salary      < 60,000?   50k-80k?
+--   1001   Ava Brooks       2023-03-13   45,000.00   yes         no
+--   1002   Marcus Reed      2022-08-01   59,999.99   yes         yes
+--   1003   Priya Nair       2021-01-04   60,000.00   NO (equal)  yes
+--   1004   Daniel Okafor    2024-06-17   60,000.01   no          yes
+--   1005   Sofia Alvarez    2019-11-25   80,000.00   no          YES (equal)
+--   1006   James Whitfield  2016-02-08  120,000.00   no          no
+--   1007   Noah Kim         2026-08-03   72,500.00   no          yes
 --
 -- empid 9999 intentionally does NOT exist ("no match" test cases).
+--
+-- Report checks:
+--   6a  abrooks sees 2 statements: 2026-09-30 first, then 2026-09-15
+--   6b/6c  month 2026-09 has pay for all 7 employees
+--   6d  hires 2024-01-01 to 2026-12-31 -> Okafor (1004), Kim (1007)
+--   6e  4 job titles across 7 employees
 --
 -- Demo logins (LOCAL DEV ONLY):
 --   hradmin / HrAdmin!2026     role HR_ADMIN
@@ -43,14 +51,15 @@ INSERT INTO employees (empid, Fname, Lname, email, HireDate, Salary, SSN) VALUES
     (1002, 'Marcus', 'Reed',       'marcus.reed@companyz.com',     '2022-08-01',  59999.99, '111-22-1002'),
     (1003, 'Priya',  'Nair',       'priya.nair@companyz.com',      '2021-01-04',  60000.00, '111-22-1003'),
     (1004, 'Daniel', 'Okafor',     'daniel.okafor@companyz.com',   '2024-06-17',  60000.01, '111-22-1004'),
-    (1005, 'Sofia',  'Alvarez',    'sofia.alvarez@companyz.com',   '2019-11-25',  85000.00, '111-22-1005'),
-    (1006, 'James',  'Whitfield',  'james.whitfield@companyz.com', '2016-02-08', 120000.00, '111-22-1006');
+    (1005, 'Sofia',  'Alvarez',    'sofia.alvarez@companyz.com',   '2019-11-25',  80000.00, '111-22-1005'),
+    (1006, 'James',  'Whitfield',  'james.whitfield@companyz.com', '2016-02-08', 120000.00, '111-22-1006'),
+    (1007, 'Noah',   'Kim',        'noah.kim@companyz.com',        '2026-08-03',  72500.00, '111-22-1007');
 
 INSERT INTO employee_job_titles (empid, job_title_id) VALUES
-    (1001, 100), (1002, 102), (1003, 101), (1004, 100), (1005, 102), (1006, 103);
+    (1001, 100), (1002, 102), (1003, 101), (1004, 100), (1005, 102), (1006, 103), (1007, 100);
 
 INSERT INTO employee_division (empid, div_ID) VALUES
-    (1001, 1), (1002, 3), (1003, 2), (1004, 1), (1005, 3), (1006, 1);
+    (1001, 1), (1002, 3), (1003, 2), (1004, 1), (1005, 3), (1006, 1), (1007, 1);
 
 INSERT INTO addresses (empid, street, cityID, stateID, zip) VALUES
     (1001, '12 Elm St',          1, 1, '30303'),
@@ -58,7 +67,8 @@ INSERT INTO addresses (empid, street, cityID, stateID, zip) VALUES
     (1003, '9 Magnolia Ct',      3, 1, '30060'),
     (1004, '77 Pine Rd',         1, 1, '30318'),
     (1005, '2100 Riverside Dr',  4, 2, '35203'),
-    (1006, '5 Ocean Blvd',       5, 3, '32202');
+    (1006, '5 Ocean Blvd',       5, 3, '32202'),
+    (1007, '310 Ponce Ave',      1, 1, '30308');
 
 INSERT INTO demographics (empid, DOB, mobile_phone, emergency_contact_name, emergency_contact_phone) VALUES
     (1001, '1999-05-21', '404-555-0101', 'Linda Brooks',   '404-555-0201'),
@@ -66,7 +76,8 @@ INSERT INTO demographics (empid, DOB, mobile_phone, emergency_contact_name, emer
     (1003, '1990-12-15', '678-555-0103', 'Arjun Nair',     '678-555-0203'),
     (1004, '2000-07-30', '470-555-0104', 'Grace Okafor',   '470-555-0204'),
     (1005, '1987-03-08', '205-555-0105', 'Mateo Alvarez',  '205-555-0205'),
-    (1006, '1979-10-11', '904-555-0106', 'Helen Whitfield','904-555-0206');
+    (1006, '1979-10-11', '904-555-0106', 'Helen Whitfield','904-555-0206'),
+    (1007, '2001-04-19', '404-555-0107', 'Min-jun Kim',    '404-555-0207');
 
 -- Two pay periods for every employee (semi-monthly gross = salary / 24)
 INSERT INTO payroll (pay_date, earnings, fed_tax, fed_med, fed_SS, state_tax, retire_401k, health_care, empid)

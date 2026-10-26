@@ -3,9 +3,9 @@
 --
 --   ems_auth      can only read/update logins and write the audit log.
 --                 Used before anyone is signed in.
---   ems_employee  read-only. The service layer further restricts an
---                 employee to their OWN rows.
---   ems_hr        full CRUD on employee data, no schema changes.
+--   ems_employee  read-only (features 1b, 3, 6a, 6d). The service layer
+--                 further restricts an employee to their OWN rows.
+--   ems_hr        full CRUD on employee data (feature 1a), no schema changes.
 --
 -- The passwords below are for LOCAL DEVELOPMENT ONLY. Use different
 -- ones on any shared or hosted database (e.g. Aiven).
