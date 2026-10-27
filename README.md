@@ -1,7 +1,6 @@
 # Company Z Employee Management System
 
-A secure, role-based employee management system for Company Z, built in Java and MySQL for CSc 3350 (Fall 2026).
-
+A secure, role-based employee management system for Company Z, built in Java and MySQL
 ## The problem
 
 Company Z has about 75 full-time employees and plans to triple that within 24 months. Today:
