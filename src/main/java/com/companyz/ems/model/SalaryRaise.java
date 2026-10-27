@@ -9,7 +9,7 @@ import java.util.Objects;
  *
  * <ul>
  *   <li>Feature 5 / deliverable 3a: {@link #inRange} -- min and max are both <b>inclusive</b>,
- *       so "$50,000 to $80,000" includes someone earning exactly $80,000.</li>
+ *       so "$45,000 to $55,000" includes someone earning exactly $55,000.</li>
  *   <li>Deliverable 2 task (c): {@link #below} -- salary <b>strictly less than</b> the threshold,
  *       so someone earning exactly the threshold is not raised.</li>
  * </ul>

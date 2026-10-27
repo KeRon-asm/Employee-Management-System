@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 class ReportTest {
 
     private static final Session HR = new Session(1, "hradmin", Role.HR_ADMIN, null);
-    private static final Session EMPLOYEE = new Session(2, "abrooks", Role.EMPLOYEE, 1001);
+    private static final Session EMPLOYEE = new Session(2, "sbeagle", Role.EMPLOYEE, 1);
 
     private final FakeReportDao reportDao = new FakeReportDao();
 
@@ -75,7 +75,7 @@ class ReportTest {
 
         List<List<Object>> rows = new PayHistoryReport(payrollDao).run(EMPLOYEE, null);
 
-        assertEquals(List.of(1001), requestedIds);
+        assertEquals(List.of(1), requestedIds);
         assertEquals(LocalDate.of(2026, 9, 30), rows.get(0).get(0));
         assertEquals(LocalDate.of(2026, 9, 15), rows.get(1).get(0));
         assertEquals(LocalDate.of(2026, 8, 31), rows.get(2).get(0));
@@ -105,7 +105,7 @@ class ReportTest {
 
     private static PayStatement pay(LocalDate date) {
         BigDecimal z = BigDecimal.ZERO;
-        return new PayStatement(0, 1001, date, new BigDecimal("1875.00"), z, z, z, z, z, z);
+        return new PayStatement(0, 1, date, new BigDecimal("1875.00"), z, z, z, z, z, z);
     }
 
     private static Employee employee(int id, String first, String last, String title) {
