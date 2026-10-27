@@ -18,8 +18,8 @@ How each line of Company Z's user story maps to the design. Use this table when 
 | 1 | User logon / authorization | All | `AuthService`, `Session`, `PasswordHasher`, `UserDao`, `AuditDao` | `app_users`, `audit_log` | `ems_auth` | Interfaces and hashing done; implementation to do |
 | 1a | HR admin: secure CRUD on the entire database | HR_ADMIN | `EmployeeService` (add, update, delete), `EmployeeDao` | all employee tables | `ems_hr` | Interfaces done |
 | 1b | Employees see their own pay and demographic data | EMPLOYEE | `EmployeeService.searchForViewing`, `PayHistoryReport` | `employees`, `demographics`, `addresses`, `payroll` | `ems_employee` (read-only) | Interfaces done; 6a done |
-| 2 | Search by name, DOB, SSN, empID **for editing** | HR_ADMIN | `EmployeeService.searchForEditing`, `SearchCriteria`, `EmployeeDao.search` | `employees`, `demographics` | `ems_hr` | Interfaces done |
-| 3 | Search by name, DOB, SSN, empID **for viewing** | EMPLOYEE | `EmployeeService.searchForViewing` (own record only, SSN masked) | `employees`, `demographics`, `addresses` | `ems_employee` | Interfaces done |
+| 2 | Search by name, DOB, SSN, empID **for editing** | HR_ADMIN | `EmployeeService.searchForEditing`, `SearchCriteria`, `EmployeeDao.search` | `employees`, `demographics` | `ems_hr` | Search code and tests done; edit screen to do |
+| 3 | Search by name, DOB, SSN, empID **for viewing** | EMPLOYEE | `EmployeeService.searchForViewing` (own record only, SSN masked) | `employees`, `demographics`, `addresses` | `ems_employee` | Search code and tests done; screen to do |
 | 4 | Update an employee picked from search results | HR_ADMIN | `EmployeeService.updateEmployee`, `EmployeeDao.update` | all employee tables, one transaction | `ems_hr` | Interfaces done |
 | 5 | Raise salary by a % only for salaries in a range | HR_ADMIN | `SalaryRaise.inRange`, `EmployeeService.previewRaise` / `applyRaise`, `EmployeeDao.applyRaise` | `employees`, `audit_log` | `ems_hr` | Rule logic and tests done; DAO to do |
 | 6a | Pay statement history, newest pay date first | EMPLOYEE | `PayHistoryReport`, `PayrollDao` | `payroll` | `ems_employee` | Report and tests done; DAO to do |
@@ -47,8 +47,11 @@ Confirm these with the professor if any seem wrong. Each is a one-line change.
 1. **Employees view only their own record (feature 3).** Feature 1b says employees see "their" pay and demographic data, and deliverable 1.3 has an employee look up their own empID. So an employee's search returns their own record or "no match", never a co-worker's SSN or DOB.
 2. **Report 6a is for general employees,** as the user story says. HR admins can still see anyone's records through search.
 3. **Report 6d is open to everyone,** so it shows only hire date, empID, name, job title and division. It never shows salary, SSN, DOB, address or phone.
-4. **Salary range (feature 5) includes both ends:** $50,000 to $80,000 includes exactly $80,000. **Task 2c is strict:** "less than $60,000" excludes exactly $60,000.
+4. **Salary range (feature 5) includes both ends:** a range such as $45,000 to $55,000 includes employees earning exactly either amount. **Task 2c is strict:** "less than $48,000" excludes someone earning exactly $48,000.
 5. **Raises are 0-100%.** Zero, negative and over-100 values are rejected as likely typos. New salaries round half-up to the cent.
 6. **"Total pay for a month"** is the sum of gross `payroll.earnings` for pay dates in that calendar month, shown with employee count and a grand total.
 7. **W-2 generation is out of scope.** The user story describes it as the current process but doesn't list it as a feature to build.
 8. **All employees are full-time salaried,** so there are no hourly rates or hours in the model.
+9. **We build on the professor's scripts, not replace them.** `sql/01`, `05` and `06` are his files, unchanged. `sql/02` adds what they lack: primary and foreign keys (deleting an employee removes their rows everywhere), auto-numbered `empID` (task 3b) and `payID`, and one job title and one division per employee.
+10. **Pay statements are weekly** (his payroll script uses salary / 52), so "total pay for a month" adds up every statement dated in that month.
+11. **His columns allow blanks** (hire date, SSN, pay amounts). Code reading them must cope with NULL.

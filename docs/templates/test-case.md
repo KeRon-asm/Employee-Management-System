@@ -1,6 +1,6 @@
 # Test case template
 
-Copy one block per test case. Use the shared data in `sql/05_seed_data.sql`.
+Copy one block per test case. Use the shared test data (`sql/05` to `sql/07`).
 
 ---
 
@@ -9,7 +9,7 @@ Copy one block per test case. Use the shared data in `sql/05_seed_data.sql`.
 | Field | Detail |
 |---|---|
 | **Related PT** | PT-<n> |
-| **Preconditions / test data** | e.g. signed in as `hradmin`; empid 1003 has salary $60,000.00 |
+| **Preconditions / test data** | e.g. signed in as `hradmin`; employee 2 has salary $48,000.00 |
 | **Steps** | 1. ...<br>2. ...<br>3. ... |
 | **Input** | Exact values entered |
 | **Expected result** | Exact screen message and exact database values afterward |
@@ -25,9 +25,9 @@ Copy one block per test case. Use the shared data in `sql/05_seed_data.sql`.
 | Field | Detail |
 |---|---|
 | **Related PT** | PT-6 (task c) |
-| **Preconditions / test data** | Signed in as `hradmin`. Fresh seed data: empid 1003 salary = $60,000.00, empid 1002 salary = $59,999.99 |
+| **Preconditions / test data** | Signed in as `hradmin`. Fresh test data: employee 2 salary = $48,000.00, employee 1 salary = $45,000.00 |
 | **Steps** | 1. Open "Salary Increase".<br>2. Enter percentage and threshold.<br>3. Click Preview, then Apply. |
-| **Input** | Percentage = 3.0, Threshold = 60000.00 |
-| **Expected result** | Message reports 2 employees updated (1001, 1002). Empid 1002 salary = $61,799.99. Empid 1003 salary unchanged at $60,000.00. One audit_log row per updated employee. |
+| **Input** | Percentage = 3.0, Threshold = 48000.00 |
+| **Expected result** | Message reports 3 employees updated (1, 5, 6). Employee 1 salary = $46,350.00. Employee 2 salary unchanged at $48,000.00. One audit_log row per updated employee. |
 | **Actual result** | |
 | **Pass / Fail** | |

@@ -29,10 +29,10 @@ Also:         Submits ALL group deliverables (only one person uploads)
 MEMBER 2 - SEARCH (features 2 and 3) + DATABASE
 ----------------------------------------------------------------------
 11/1 tasks:   PT-2 Search by name, DOB, SSN, empID, plus 2+ test cases
-              Finalize shared test data (sql/05_seed_data.sql)
+              Finalize shared test data (sql/07_seed_data.sql)
 Code:         JdbcEmployeeDao: findById, search
               Search screen (HR edit mode and employee view mode)
-              Check sql/01_base_schema.sql against the professor's script
+              Check sql/01, 05 and 06 are still identical to the professor's scripts
 SDD:          Data schemas section (schema diagram, 3NF tables)
               Extra PT: employee views own record
 Video:        Search demo
@@ -122,6 +122,6 @@ RULES
 ----------------------------------------------------------------------
 - Work on your own branch and open a pull request. One teammate approves.
 - Never commit passwords (db.properties stays on your computer).
-- Use the shared test data, empids 1001-1007 (9999 = "not found").
+- Use the shared test data, empIDs 1-6 (9999 = "not found").
 - Stuck for more than a day? Say so in the group chat.
 - Only Member 1 uploads to iCollege.

@@ -9,7 +9,7 @@ The assignment asks for 5 programming tasks (PTs) from the user story, plus task
 | Member | Programming task | Test cases | Extra duty |
 |---|---|---|---|
 | 1 | PT-1: Login and role-based authorization (features 1, 1a, 1b). `AuthService`, `Session` | 2+ (valid login, wrong password, lockout after 5 tries, employee blocked from HR screens) | **Editor:** templates, formatting, final document, submission |
-| 2 | PT-2: Search by name, DOB, SSN, empID. HR searches anyone to edit (feature 2); employees view only their own record (feature 3). `EmployeeService.searchForEditing` / `searchForViewing` | 2+ (one HR, one employee, one no-match) | **Shared test data:** owns `sql/05_seed_data.sql` |
+| 2 | PT-2: Search by name, DOB, SSN, empID. HR searches anyone to edit (feature 2); employees view only their own record (feature 3). `EmployeeService.searchForEditing` / `searchForViewing` | 2+ (one HR, one employee, one no-match) | **Shared test data:** owns `sql/07_seed_data.sql` |
 | 3 | PT-3: Reports 6a-6e (feature 6), including who may run each one. `report` package | 2+ (one data check, one role check, e.g. employee denied 6b) | Checks every PT names the correct tables, including the new 3NF tables |
 | 4 | PT-4 / task (a): Update employee data picked from search results (feature 4), using `Employee`, `Address`, `Demographics` | **3+** | |
 | 5 | PT-5 / task (b): Search by empID for deletion (feature 1a). Confirm if found, "no match" otherwise. `findForDeletion`, `deleteEmployee` | **3+** (found and confirmed, found and cancelled, not found: 9999) | |
@@ -21,10 +21,10 @@ The assignment asks for 5 programming tasks (PTs) from the user story, plus task
 
 1. Copy `docs/templates/programming-task.md` to `docs/deliverable-2/PT-<n>.md` and fill it in.
 2. Write your test cases with `docs/templates/test-case.md`, in the same file.
-3. Use the **shared test data** in `sql/05_seed_data.sql` (empids 1001-1007, and 9999 for "not found"). Don't invent new employees.
+3. Use the **shared test data** (`sql/05` to `sql/07`: the professor's employees, empIDs 1-6, and 9999 for "not found"). Don't invent new employees.
 4. Open a pull request. Your assigned reviewer approves it.
 
-Good test cases cover the edges. For (c) with a $60,000 threshold: empid 1003 earns exactly $60,000 and must **not** change; 1002 earns $59,999.99 and **must** change; a negative percentage must be rejected; and a threshold nobody is under must report 0 updated. For feature 5's range of $50,000-$80,000, empid 1005 earns exactly $80,000 and **is** included.
+Good test cases cover the edges. For (c) with a $48,000 threshold: employee 2 earns exactly $48,000 and must **not** change; employees 1, 5 and 6 earn less and **must** change; a negative percentage must be rejected; and a threshold nobody is under (say $30,000) must report 0 updated. For feature 5's range of $45,000-$55,000, employees 1 and 3 earn exactly $45,000 and $55,000 and **are** included.
 
 ## Timeline
 

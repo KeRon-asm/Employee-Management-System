@@ -53,7 +53,7 @@ mvn -q compile exec:java
 
 If step 4 prints `All accounts connected`, you're set up.
 
-**No Docker?** Run the files in `sql/` in numeric order in MySQL Workbench or DBeaver, as root, then continue from step 2.
+**No Docker?** In MySQL Workbench or DBeaver, as root, run `CREATE DATABASE employeeData;`, then run the files in `sql/` in numeric order (01 to 07), then continue from step 2.
 
 **Starting the database over:** `docker compose down -v && docker compose up -d`
 
@@ -62,12 +62,12 @@ If step 4 prints `All accounts connected`, you're set up.
 | Username | Password | Role |
 |---|---|---|
 | `hradmin` | `HrAdmin!2026` | HR_ADMIN |
-| `abrooks` | `Employee!2026` | EMPLOYEE (empid 1001) |
+| `sbeagle` | `Employee!2026` | EMPLOYEE (empID 1, Snoopy Beagle) |
 
 ### Using Aiven instead of local MySQL
 
 1. Create a MySQL service on [Aiven](https://aiven.io) and note its host, port and `avnadmin` password.
-2. Connect to it in DBeaver as `avnadmin`. Run `sql/01` through `sql/05` in order.
+2. Connect to it in DBeaver as `avnadmin` and create the database: `CREATE DATABASE employeeData;`. Then run `sql/01` through `sql/07` in order.
    **First, change the three passwords in `sql/04_app_users.sql`.** A hosted database is reachable from the internet.
 3. In `db.properties`, set the URL (Aiven requires SSL) and the new passwords:
    ```
@@ -112,11 +112,13 @@ ui  ──►  service  ──►  dao (interfaces)  ──►  dao.jdbc (MySQL)
 
 | Script | What it does |
 |---|---|
-| `sql/01_base_schema.sql` | Original employeeData tables (**reconcile with the professor's script**) |
-| `sql/02_normalization.sql` | 3NF tables: `states`, `cities`, `addresses`, `demographics`, plus search indexes |
+| `sql/01_employeeData_create.sql` | The professor's tables, **unchanged** |
+| `sql/02_normalization.sql` | Our additions: primary and foreign keys on the professor's tables, `empID` and `payID` auto-numbering, the 3NF tables `states`, `cities`, `addresses`, `demographics`, and search indexes |
 | `sql/03_security.sql` | `app_users` (hashed logins) and `audit_log` |
 | `sql/04_app_users.sql` | The three least-privilege MySQL accounts above |
-| `sql/05_seed_data.sql` | Shared test data with salary boundary cases. **Write all test cases against these rows** |
+| `sql/05_employeeData_insert.sql` | The professor's sample employees (empID 1-6), **unchanged** |
+| `sql/06_employeeData_payroll.sql` | The professor's sample pay statements, **unchanged** |
+| `sql/07_seed_data.sql` | Our additions: addresses, demographics and logins. With files 05 and 06 this is the **shared test data: write all test cases against these rows** |
 
 ---
 
@@ -125,13 +127,14 @@ ui  ──►  service  ──►  dao (interfaces)  ──►  dao.jdbc (MySQL)
 | Area | Status |
 |---|---|
 | Project structure, build, CI | Done |
-| Database schema, security accounts, seed data | Done (base schema needs checking against the professor's script) |
+| Database schema, security accounts, seed data | Done, built directly on the professor's three scripts (not yet run against a real MySQL server) |
 | Password hashing, SSN masking | Done, with tests |
 | Salary raise rules (range and "less than") | Done, with boundary tests |
 | Reports 6a-6e: role checks, sorting, grouping, totals | Done, with tests (need JDBC data access) |
 | Service and DAO interfaces | Done |
-| JDBC DAO implementations | To do |
-| `AuthService` and `EmployeeService` implementations | To do |
+| `JdbcEmployeeDao` and `EmployeeServiceImpl`: search (features 2, 3) | Done, with tests. Other methods are stubs marked with the member who owns them |
+| Other JDBC DAOs (user, audit, payroll, report) and the rest of `EmployeeServiceImpl` | To do |
+| `AuthService` implementation | To do |
 | UI | To do (Swing vs. JavaFX decision pending) |
 
 ## Deliverables

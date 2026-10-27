@@ -42,7 +42,7 @@ These are worth points (cohesion, coupling, interfaces, abstract classes) and ke
 
 - `mvn verify` must pass before you open a pull request. GitHub Actions runs it on every push too.
 - Add unit tests next to the code you write (`src/test/java/...`, same package).
-- Written test cases for the documents use the shared data in `sql/05_seed_data.sql` and the template in `docs/templates/test-case.md`.
+- Written test cases for the documents use the shared test data (`sql/05` to `sql/07`) and the template in `docs/templates/test-case.md`.
 
 ## Libraries
 
