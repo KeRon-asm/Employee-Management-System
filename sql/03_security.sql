@@ -13,13 +13,13 @@ CREATE TABLE app_users (
     username        VARCHAR(50)  NOT NULL,
     password_hash   VARCHAR(255) NOT NULL,
     role            ENUM('HR_ADMIN', 'EMPLOYEE') NOT NULL,
-    empid           INT          NULL,
+    empID           INT          NULL,
     failed_attempts INT          NOT NULL DEFAULT 0,
     locked_until    DATETIME     NULL,
     created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id),
     UNIQUE KEY uq_app_users_username (username),
-    FOREIGN KEY (empid) REFERENCES employees (empid) ON DELETE CASCADE
+    FOREIGN KEY (empID) REFERENCES employees (empID) ON DELETE CASCADE
 );
 
 CREATE TABLE audit_log (
