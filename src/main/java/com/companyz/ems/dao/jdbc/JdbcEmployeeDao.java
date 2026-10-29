@@ -1,6 +1,5 @@
 package com.companyz.ems.dao.jdbc;
 
-import com.companyz.ems.config.ConnectionFactory;
 import com.companyz.ems.config.DatabaseConfig.Account;
 import com.companyz.ems.dao.DataAccessException;
 import com.companyz.ems.dao.EmployeeDao;
@@ -24,16 +23,18 @@ import java.util.Optional;
  * MySQL implementation of {@link EmployeeDao}.
  *
  * <p><b>Which database account?</b> Build one instance per signed-in role:
- * {@code new JdbcEmployeeDao(connections, DatabaseConfig.accountFor(session.role()))}.
+ * {@code new JdbcEmployeeDao(connections, DatabaseConfig.accountFor(session.role()))},
+ * where {@code connections} is the app's single {@link ConnectionProvider}.
  * An HR session gets the {@code ems_hr} account; an employee session gets the read-only
  * {@code ems_employee} account, so a bug in the employee screens can never change data.
  *
  * <p><b>Rules for everyone adding methods to this class</b> (Members 4, 5, 6):
  * PreparedStatement only, try-with-resources on every Connection / Statement / ResultSet,
- * wrap {@link SQLException} in {@link DataAccessException}, and use one transaction
- * ({@code setAutoCommit(false)} ... {@code commit()} / {@code rollback()}) for any change that
- * touches more than one table. Reuse {@link #SELECT_EMPLOYEES} and {@link #mapEmployee} to
- * load full {@link Employee} objects.
+ * wrap {@link SQLException} in {@link DataAccessException}. Never call {@code setAutoCommit},
+ * {@code commit} or {@code rollback}: a method with several statements wraps them in
+ * {@code connections.inTransaction(account, () -> ...)}, which joins the service's transaction
+ * if there is one (see {@code docs/design/transactions.md}). Reuse {@link #SELECT_EMPLOYEES}
+ * and {@link #mapEmployee} to load full {@link Employee} objects.
  */
 public class JdbcEmployeeDao implements EmployeeDao {
 
@@ -58,10 +59,10 @@ public class JdbcEmployeeDao implements EmployeeDao {
             LEFT JOIN division            dv  ON dv.divID = ed.divID
             """;
 
-    private final ConnectionFactory connections;
+    private final ConnectionProvider connections;
     private final Account account;
 
-    public JdbcEmployeeDao(ConnectionFactory connections, Account account) {
+    public JdbcEmployeeDao(ConnectionProvider connections, Account account) {
         this.connections = connections;
         this.account = account;
     }

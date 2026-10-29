@@ -34,7 +34,7 @@ These are worth points (cohesion, coupling, interfaces, abstract classes) and ke
 3. **try-with-resources** for every `Connection`, `Statement` and `ResultSet`.
 4. **BigDecimal for money.** Never `double`.
 5. **Never log or print an SSN or password.** Use `SsnMasker` for display.
-6. **Audit every change.** Inserts, updates and deletes go through `AuditDao`.
+6. **Audit every change, in the same transaction.** Inserts, updates and deletes write an `AuditDao` row first, then make the change, inside one `TransactionManager.inTransaction` block. DAOs get connections from the shared `ConnectionProvider` and never call `commit` or `rollback`. See [docs/design/transactions.md](docs/design/transactions.md).
 7. **One class, one job.** If a file is getting long, split it.
 8. **Secrets stay local.** `db.properties` is git-ignored. Don't commit passwords.
 

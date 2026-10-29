@@ -90,8 +90,8 @@ ui  ──►  service  ──►  dao (interfaces)  ──►  dao.jdbc (MySQL)
 | `model` | Plain data: `Employee`, `Address`, `Demographics`, `PayStatement`, `PayTotal`, `UserAccount`, `Session`, `Role`, `SearchCriteria`, `SalaryRaise`, `DateRange` |
 | `service` | Features 1-5: `AuthService` (login and lockout) and `EmployeeService` (search, add, update, delete, raises). Role checks and audit logging happen here |
 | `report` | Feature 6: abstract `Report`, with `PayHistoryReport` (6a), `MonthlyPayByJobTitleReport` (6b), `MonthlyPayByDivisionReport` (6c), `NewHiresReport` (6d), `EmployeesByJobTitleReport` (6e). 6b and 6c share `MonthlyPayTotalReport` |
-| `dao` | Data-access interfaces: `EmployeeDao`, `PayrollDao`, `ReportDao`, `UserDao`, `AuditDao` |
-| `dao.jdbc` | MySQL implementations. PreparedStatement only, try-with-resources, transactions for multi-table changes |
+| `dao` | Data-access interfaces: `EmployeeDao`, `PayrollDao`, `ReportDao`, `UserDao`, `AuditDao`, and `TransactionManager` (saves a change and its audit row together) |
+| `dao.jdbc` | MySQL implementations. PreparedStatement only, try-with-resources. `ConnectionProvider` hands out connections and `JdbcTransactionManager` runs transactions ([design](docs/design/transactions.md)) |
 | `security` | `PasswordHasher` (PBKDF2), `SsnMasker` |
 | `config` | `db.properties` loading and per-role database connections |
 | `ui` | Screens only. No SQL or business logic |

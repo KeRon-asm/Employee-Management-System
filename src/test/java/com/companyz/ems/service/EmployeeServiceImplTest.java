@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.companyz.ems.dao.AuditDao;
 import com.companyz.ems.dao.EmployeeDao;
+import com.companyz.ems.dao.TransactionManager;
 import com.companyz.ems.model.Demographics;
 import com.companyz.ems.model.Employee;
 import com.companyz.ems.model.Role;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -32,7 +34,13 @@ class EmployeeServiceImplTest {
 
     private final FakeEmployeeDao dao = new FakeEmployeeDao();
     private final EmployeeServiceImpl service =
-            new EmployeeServiceImpl(dao, (userId, action, table, recordId, oldValue, newValue) -> { });
+            new EmployeeServiceImpl(dao, (userId, action, table, recordId, oldValue, newValue) -> { },
+                    new TransactionManager() {
+                        @Override
+                        public <T> T inTransaction(Supplier<T> work) {
+                            return work.get(); // the fake DAO has no database, so just run the work
+                        }
+                    });
 
     // ---- Feature 2: HR searches to edit (TC-2.1 to TC-2.3) ----
 

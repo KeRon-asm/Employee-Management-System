@@ -2,6 +2,7 @@ package com.companyz.ems.service;
 
 import com.companyz.ems.dao.AuditDao;
 import com.companyz.ems.dao.EmployeeDao;
+import com.companyz.ems.dao.TransactionManager;
 import com.companyz.ems.model.Employee;
 import com.companyz.ems.model.Role;
 import com.companyz.ems.model.SalaryRaise;
@@ -17,17 +18,20 @@ import java.util.Optional;
  * then calls the DAO.
  *
  * <p>Build one per signed-in user, passing a DAO created for that user's database account
- * (see {@code JdbcEmployeeDao}). Members 4, 5 and 6 each fill in their own methods below;
- * they use {@code auditDao} to record every insert, update and delete.
+ * (see {@code JdbcEmployeeDao}). Members 4, 5 and 6 each fill in their own methods below.
+ * Every change and its {@code auditDao} row go inside one {@code transactions.inTransaction}
+ * block, audit row first (see {@code docs/design/transactions.md}).
  */
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeDao employeeDao;
-    private final AuditDao auditDao; // used by the update/add/delete/raise methods (Members 4-6)
+    private final AuditDao auditDao;                 // used by the update/add/delete/raise methods (Members 4-6)
+    private final TransactionManager transactions;   // same: change + audit row saved together
 
-    public EmployeeServiceImpl(EmployeeDao employeeDao, AuditDao auditDao) {
+    public EmployeeServiceImpl(EmployeeDao employeeDao, AuditDao auditDao, TransactionManager transactions) {
         this.employeeDao = Objects.requireNonNull(employeeDao, "employeeDao");
         this.auditDao = Objects.requireNonNull(auditDao, "auditDao");
+        this.transactions = Objects.requireNonNull(transactions, "transactions");
     }
 
     // ------------------------------------------------------------------

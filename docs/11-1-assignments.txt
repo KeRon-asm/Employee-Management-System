@@ -22,8 +22,10 @@ Logins:  hradmin / HrAdmin!2026  (HR admin)
 empID 9999 does not exist (use it for "not found" tests).
 
 For [EXTRA] code: all files go under src/main/java/com/companyz/ems/.
-Every Jdbc class takes a ConnectionFactory in its constructor and uses
-PreparedStatement for every query.
+Every Jdbc class takes a ConnectionProvider in its constructor and uses
+PreparedStatement for every query. If your code changes data (Members 1,
+4, 5, 6), read docs/design/transactions.md first: the change and its
+audit_log row go in one transactions.inTransaction block, audit row first.
 
 Deadlines:
   Thu 10/29  Your PT and 3 test cases drafted, pull request opened
